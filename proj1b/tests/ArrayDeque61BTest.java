@@ -31,7 +31,7 @@ public class ArrayDeque61BTest {
         //assertThat(deque.toList()).containsExactly(3, 2, 1).inOrder();
         deque.addFirst(4);
         deque.addFirst(5);
-        assertThat(deque.toList()).containsExactly(4, 3, 2, 1).inOrder();
+        assertThat(deque.toList()).containsExactly(5, 4, 3, 2, 1).inOrder();
     }
 
     @Test
@@ -46,7 +46,7 @@ public class ArrayDeque61BTest {
         deque.addLast(4);
         assertThat(deque.toList()).containsExactly(1, 2, 3, 4).inOrder();
         deque.addLast(5);
-        assertThat(deque.toList()).containsExactly(1, 2, 3, 4).inOrder();
+        assertThat(deque.toList()).containsExactly(1, 2, 3, 4, 5).inOrder();
     }
 
     @Test

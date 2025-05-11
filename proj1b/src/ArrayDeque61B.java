@@ -8,22 +8,28 @@ public class ArrayDeque61B<T> implements Deque61B<Object> {
     private int size;
     private int First;
     private int nextLast;
+    private int newCapacity;
+    private double rate;
 
     public ArrayDeque61B() {
         items = (T[]) new Object[CAPACITY];
         size = 0;
         First = 0;
         nextLast = 0;
+        newCapacity = items.length;
+        rate = items.length / newCapacity;
     }
 
     @Override
     public void addFirst(Object x) {
-        int pos = Math.floorMod(First - 1, CAPACITY);
-        //First = Math.floorMod(First - 1, CAPACITY);
+        int pos = Math.floorMod(First - 1, newCapacity);
         if (items[pos] == null) {
             items[pos] = (T) x;
             First = pos;
             size++;
+        } else {
+            resize(newCapacity * 2);
+            addFirst(x);
         }
     }
 
@@ -31,8 +37,13 @@ public class ArrayDeque61B<T> implements Deque61B<Object> {
     public void addLast(Object x) {
         if (items[nextLast] == null) {
             items[nextLast] = (T) x;
-            nextLast = (nextLast + 1) % CAPACITY;
+            nextLast = (nextLast + 1) % newCapacity;
             size++;
+        } else {
+            nextLast = Math.floorMod(nextLast - 1, newCapacity);
+            resize(newCapacity * 2);
+            nextLast = Math.floorMod(nextLast + 1, newCapacity);
+            addLast(x);
         }
 
     }
@@ -42,7 +53,7 @@ public class ArrayDeque61B<T> implements Deque61B<Object> {
         List<T> returnList = new ArrayList<>();
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                if (items != null) returnList.add(items[Math.floorMod(First + i, CAPACITY)]);
+                if (items != null) returnList.add(items[Math.floorMod(First + i, newCapacity)]);
             }
             return (List<Object>) returnList;
         } else {
@@ -70,6 +81,7 @@ public class ArrayDeque61B<T> implements Deque61B<Object> {
             size--;
             return items[First];
         }
+        resize(newCapacity / 2);
         return null;
     }
 
@@ -80,6 +92,7 @@ public class ArrayDeque61B<T> implements Deque61B<Object> {
             nextLast = (nextLast - 1) % CAPACITY;
             size--;
         }
+        resize(newCapacity / 2);
         return null;
     }
 
@@ -92,5 +105,29 @@ public class ArrayDeque61B<T> implements Deque61B<Object> {
     @Override
     public Object getRecursive(int index) {
         return null;
+    }
+
+    public boolean resize(int Capacity) {
+        if (isEmpty() == false) {
+            Capacity = newCapacity * 2;
+            T[] newItems = (T[]) new Object[Capacity];
+            for (int i = 0; i < size; i++) {
+                newItems[i] = items[Math.floorMod(First + i, Capacity)];
+            }
+            items = newItems;
+            newCapacity = Capacity;
+            return true;
+        }
+        if (rate < 0.25 && Capacity > CAPACITY) {
+            Capacity = newCapacity / 2;
+            T[] newItems1 = (T[]) new Object[Capacity];
+            for (int i = 0; i < size; i++) {
+                newItems1[i] = items[Math.floorMod(First + i, Capacity)];
+            }
+            items = newItems1;
+            newCapacity = Capacity;
+            return true;
+        }
+        return false;
     }
 }
